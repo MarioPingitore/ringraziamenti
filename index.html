@@ -2,38 +2,70 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Guarda il Video</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ringraziamenti</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
   <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       background-color: #C4161C;
-      margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: 'Montserrat', sans-serif;
       color: white;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 40px 20px;
-      box-sizing: border-box;
+      justify-content: center;
       min-height: 100vh;
-    }
-    h1 {
-      font-size: 2em;
-      margin-bottom: 30px;
+      padding: 40px 20px;
       text-align: center;
     }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 30px;
+      text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+      transition: transform 0.3s ease;
+    }
+
+    h1:hover {
+      transform: scale(1.05);
+    }
+
     iframe {
       width: 100%;
-      max-width: 560px;
-      height: 315px;
+      max-width: 720px;
+      height: 405px;
       border: none;
-      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+      transition: transform 0.3s ease;
+    }
+
+    iframe:hover {
+      transform: scale(1.02);
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.8em;
+      }
+
+      iframe {
+        height: 230px;
+      }
     }
   </style>
 </head>
 <body>
+  <h2>Laurea Magistrale in</h2>
   <h1>Computer Engineering for the Internet of Things</h1>
-  <h2>A tutti voi: </h2>
+  <br></br>
+  <h3>A tutti voi:</h3>
   <iframe src="https://www.youtube.com/embed/K7wmRFfenCM" allowfullscreen></iframe>
 </body>
 </html>
