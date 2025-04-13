@@ -26,13 +26,18 @@
       color: var(--white);
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      align-items: center; /* Centra gli elementi orizzontalmente */
+      justify-content: center; /* Centra verticalmente nella pagina */
     }
 
     header {
       text-align: center;
       margin-top: 20px;
+      margin-bottom: 20px; /* Spazio tra header e video */
       z-index: 2;
+      width: 100%;
+      position: absolute;
+      top: 0;
     }
 
     header h1 {
@@ -46,10 +51,19 @@
       color: var(--white);
     }
 
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 2;
+      position: relative;
+    }
+
     .atutti-voi {
-      margin-top: 10px;
+      margin-bottom: 15px; /* Spazio tra "A tutti voi" e il video */
       font-size: 1.5rem;
       color: var(--white);
+      text-align: center;
     }
 
     .video-wrapper {
@@ -60,11 +74,10 @@
       border-radius: 20px;
       overflow: hidden;
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-      margin-top: 40px;
       display: flex;
       justify-content: center;
       align-items: center;
-      position: relative;  /* Necessario per la corretta gestione delle bolle */
+      position: relative;
     }
 
     iframe {
@@ -132,6 +145,23 @@
       0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
       100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)); opacity: 0; }
     }
+
+    /* Media query per dispositivi molto piccoli */
+    @media (max-height: 600px) {
+      header {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+      header h1 {
+        font-size: 1.6rem;
+      }
+      header h2 {
+        font-size: 1.2rem;
+      }
+      .main-content {
+        margin-top: 160px; /* Aggiusta lo spazio dall'alto */
+      }
+    }
   </style>
 </head>
 <body>
@@ -143,10 +173,11 @@
     <h1>Computer Engineering for the Internet of Things</h1>
   </header>
 
-  <div class="atutti-voi">A tutti voi:</div>
-
-  <div class="video-wrapper">
-    <iframe src="https://www.youtube.com/embed/K7wmRFfenCM" allowfullscreen></iframe>
+  <div class="main-content">
+    <div class="atutti-voi">A tutti voi:</div>
+    <div class="video-wrapper">
+      <iframe src="https://www.youtube.com/embed/K7wmRFfenCM" allowfullscreen></iframe>
+    </div>
   </div>
 
   <footer>&copy; Mario Pingitore - 30 Aprile 2025</footer>
