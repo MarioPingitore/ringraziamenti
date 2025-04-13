@@ -34,6 +34,7 @@
       align-items: center;
       text-align: center;
       padding: 20px;
+      height: 100vh; /* Usa l'altezza completa della viewport */
     }
 
     header {
@@ -46,6 +47,11 @@
       color: var(--white);
       text-shadow: 0 2px 10px rgba(0,0,0,0.4);
     }
+    
+    .subtitle {
+      margin-top: 20px; /* Spazio ridotto tra i titoli precedenti e "A tutti voi" */
+      margin-bottom: 0; /* Eliminiamo qualsiasi margine inferiore */
+    }
 
     .video-wrapper {
       z-index: 2;
@@ -55,7 +61,7 @@
       border-radius: 20px;
       overflow: hidden;
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-      margin-top: 10px; /* Ridotto lo spazio tra il testo e il video */
+      margin-top: 0; /* Eliminato completamente lo spazio tra "A tutti voi" e il video */
     }
 
     iframe {
@@ -67,16 +73,18 @@
     footer {
       z-index: 2;
       font-size: 0.8rem;
+      margin-top: auto;
+      padding-top: 40px;
     }
 
     .bg-bubbles {
-      position: absolute;
+      position: fixed; /* Cambiato da absolute a fixed per coprire l'intera viewport */
       top: 0; left: 0;
       width: 100%;
       height: 100%;
       overflow: hidden;
       z-index: 1;
-      pointer-events: none;
+      pointer-events: none; /* Il container stesso non intercetta eventi */
     }
 
     .bubble {
@@ -85,8 +93,8 @@
       background-color: var(--bubble);
       animation: float 8s ease-in-out infinite, morph 4s ease-in-out infinite alternate;
       will-change: transform;
-      pointer-events: auto; /* Consente ai clic di essere registrati */
-      z-index: 2; /* Più alto per essere sopra l'iframe */
+      cursor: pointer; /* Cursore pointer per indicare che è cliccabile */
+      pointer-events: auto; /* Ogni bolla intercetta i propri eventi */
     }
 
     @keyframes float {
@@ -123,15 +131,17 @@
 <body>
   <div class="bg-bubbles" id="bubbles-container"></div>
 
-  <header>
+  <header style="margin-bottom: 0;">
     <h2>Laurea Magistrale</h2>
     <h2>in</h2>
     <h1>Computer Engineering for the Internet of Things</h1>
-    <br><br>
-    <h2>A tutti voi:</h2>
   </header>
-
-  <div class="video-wrapper">
+    
+  <div style="flex-grow: 0.4;"></div>
+  
+  <div style="display: flex; flex-direction: column; align-items: center; width: 100%; margin-bottom: 0;">
+    <p style="font-size: 1.5rem; font-weight: bold; margin-bottom: 3px;">A tutti voi:</p>
+    <div class="video-wrapper" style="margin-top: 0;">
     <iframe src="https://www.youtube.com/embed/K7wmRFfenCM" allowfullscreen></iframe>
   </div>
 
@@ -148,9 +158,16 @@
       bubble.classList.add('bubble');
       bubble.style.width = `${size}px`;
       bubble.style.height = `${size}px`;
-      bubble.style.top = `${Math.random() * 100}%`;
+      
+      // Evitiamo di generare bolle nella parte superiore dello schermo (primi 30%)
+      // dove potrebbero esserci problemi di cliccabilità
+      bubble.style.top = `${30 + Math.random() * 70}%`;
       bubble.style.left = `${Math.random() * 100}%`;
       bubble.style.animationDelay = `${Math.random() * 5}s`;
+      
+      // Imposta il livello z-index molto alto per garantire la cliccabilità
+      bubble.style.zIndex = '1000';
+      
       bubbleContainer.appendChild(bubble);
       bubbles.push(bubble);
 
@@ -172,6 +189,18 @@
 
     function spawnConfetti(rect) {
       const numPieces = 20;
+      // Colori vivaci per i confetti
+      const colors = [
+        '#FF5252', // rosso
+        '#FFEB3B', // giallo
+        '#2196F3', // blu
+        '#4CAF50', // verde
+        '#9C27B0', // viola
+        '#FF9800', // arancione
+        '#00BCD4', // azzurro
+        '#E91E63'  // rosa
+      ];
+      
       for (let i = 0; i < numPieces; i++) {
         const confetti = document.createElement('div');
         confetti.classList.add('confetti');
@@ -179,7 +208,6 @@
         const y = rect.top + rect.height / 2;
         confetti.style.left = `${x}px`;
         confetti.style.top = `${y}px`;
-        const colors = ['#fff', '#f7f7f7', '#eeeeee'];
         confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
         const tx = (Math.random() * 300 - 150) + 'px';
         const ty = (Math.random() * 300 - 150) + 'px';
