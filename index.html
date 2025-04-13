@@ -9,7 +9,7 @@
     :root {
       --primary: #C4161C;
       --white: #ffffff;
-      --bubble: rgba(255, 255, 255, 0.2);
+      --bubble: rgba(255, 255, 255, 0.25);
     }
 
     * {
@@ -68,16 +68,6 @@
       font-size: 0.8rem;
     }
 
-    /* Stili per le bolle */
-    .bubble {
-      position: absolute;
-      border-radius: 50%;
-      background-color: var(--bubble);
-      pointer-events: auto;
-      transition: transform 0.3s ease, opacity 0.3s ease;
-    }
-
-    /* Contenitore per le bolle */
     .bg-bubbles {
       position: absolute;
       top: 0; left: 0;
@@ -85,15 +75,35 @@
       height: 100%;
       overflow: hidden;
       z-index: 0;
+      pointer-events: none;
     }
 
-    /* Stili per le particelle di coriandoli */
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      background-color: var(--bubble);
+      animation: float 8s ease-in-out infinite, morph 4s ease-in-out infinite alternate;
+      will-change: transform;
+      pointer-events: auto;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-30px) scale(1.05); }
+      100% { transform: translateY(0) scale(1); }
+    }
+
+    @keyframes morph {
+      0% { border-radius: 50%; transform: scale(1); }
+      50% { border-radius: 45% 55% 60% 40% / 60% 40% 55% 45%; transform: scale(1.1); }
+      100% { border-radius: 50%; transform: scale(1); }
+    }
+
     .confetti {
       position: absolute;
       width: 6px;
       height: 10px;
       opacity: 0.9;
-      transform: rotate(0deg);
       pointer-events: none;
     }
 
@@ -112,33 +122,38 @@
   <div class="bg-bubbles" id="bubbles-container"></div>
 
   <header>
-    <h1>Guarda il bubbolo video</h1>
+    <h2>Laurea Magistrale in</h2>
+    <h1>Computer Engineering for the Internet of Things</h1>
+    <br></br>
+    <br></br>
+    <h2>A tutti voi:</h2>
+    <br></br>
+   
   </header>
 
   <div class="video-wrapper">
     <iframe src="https://www.youtube.com/embed/K7wmRFfenCM" allowfullscreen></iframe>
   </div>
 
-  <footer>&copy; 2025 - Il tuo progetto creativo</footer>
+  <footer>&copy; Mario Pingitore - 30 Aprile 2025</footer>
 
   <script>
     const bubbleContainer = document.getElementById('bubbles-container');
-    const NUM_BUBBLES = 20;
+    const NUM_BUBBLES = 10;
     const bubbles = [];
 
-    // Funzione per creare una bolla
     function createBubble() {
       const bubble = document.createElement('div');
-      const size = Math.random() * 40 + 80; // dimensioni: 80-120px
+      const size = Math.random() * 60 + 100; // bolle grandi
       bubble.classList.add('bubble');
       bubble.style.width = `${size}px`;
       bubble.style.height = `${size}px`;
       bubble.style.top = `${Math.random() * 100}%`;
       bubble.style.left = `${Math.random() * 100}%`;
+      bubble.style.animationDelay = `${Math.random() * 5}s`;
       bubbleContainer.appendChild(bubble);
       bubbles.push(bubble);
 
-      // Azione: al click della bolla, esegue animazione pop e confetti
       bubble.addEventListener('click', () => {
         bubble.style.animation = 'pop 0.3s ease-out forwards';
         spawnConfetti(bubble.getBoundingClientRect());
@@ -151,89 +166,44 @@
       });
     }
 
-    // Crea le bolle iniziali
     for (let i = 0; i < NUM_BUBBLES; i++) {
       createBubble();
     }
 
-    // Funzione per generare particelle di coriandoli
     function spawnConfetti(rect) {
-      const numPieces = 15;
+      const numPieces = 20;
       for (let i = 0; i < numPieces; i++) {
         const confetti = document.createElement('div');
         confetti.classList.add('confetti');
-        // Posizionamento: centro della bolla
         const x = rect.left + rect.width / 2;
         const y = rect.top + rect.height / 2;
         confetti.style.left = `${x}px`;
         confetti.style.top = `${y}px`;
-        // Colori casuali
-        const colors = ['#FFFFFF', '#FFFAF0', '#F0F8FF'];
+        const colors = ['#fff', '#f7f7f7', '#eeeeee'];
         confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        // Imposta variabili CSS per movimento casuale
-        const tx = (Math.random() * 200 - 100) + 'px';
-        const ty = (Math.random() * 200 - 100) + 'px';
+        const tx = (Math.random() * 300 - 150) + 'px';
+        const ty = (Math.random() * 300 - 150) + 'px';
         const rot = (Math.random() * 360) + 'deg';
         confetti.style.setProperty('--tx', tx);
         confetti.style.setProperty('--ty', ty);
         confetti.style.setProperty('--rot', rot);
-        confetti.style.animation = 'confettiFall 0.8s ease-out forwards';
+        confetti.style.animation = 'confettiFall 0.9s ease-out forwards';
         document.body.appendChild(confetti);
-        // Rimuove il confetti dopo l'animazione
-        setTimeout(() => {
-          confetti.remove();
-        }, 800);
+        setTimeout(() => confetti.remove(), 1000);
       }
     }
 
-    // Movimento in base al device orientation o mouse (per dispositivi non mobili)
-    function updateBubblesMovement(xOffset, yOffset) {
+    function updateBubblesByMotion(xOffset, yOffset) {
       bubbles.forEach(b => {
-        b.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+        b.style.transform = `translate(${xOffset}px, ${yOffset}px) scale(1)`;
       });
     }
 
-    // Usa l'evento deviceorientation (giroscopio)
     if (window.DeviceOrientationEvent) {
       window.addEventListener("deviceorientation", (e) => {
-        // Modifica il divisore per controllare la sensibilità
-        const x = e.gamma ? e.gamma / 6 : 0;
-        const y = e.beta ? e.beta / 6 : 0;
-        updateBubblesMovement(x, y);
-      });
-    }
-
-    // Fallback con il mouse
-    document.addEventListener('mousemove', (e) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 20;
-      const y = (e.clientY / window.innerHeight - 0.5) * 20;
-      updateBubblesMovement(x, y);
-    });
-
-    // Rilevamento dello shake con devicemotion
-    if (window.DeviceMotionEvent) {
-      let lastShake = 0;
-      window.addEventListener("devicemotion", (e) => {
-        const acc = e.accelerationIncludingGravity;
-        // Calcola la magnitudine dell'accelerazione
-        const magnitude = Math.sqrt(acc.x**2 + acc.y**2 + acc.z**2);
-        const now = Date.now();
-        // Soglia di shake (può variare a seconda del dispositivo)
-        if (magnitude > 15 && now - lastShake > 1000) {
-          lastShake = now;
-          // Genera un effetto di movimento "esplosivo" per tutte le bolle
-          bubbles.forEach(b => {
-            const offsetX = (Math.random() - 0.5) * 200;
-            const offsetY = (Math.random() - 0.5) * 200;
-            b.style.transition = "transform 0.5s ease";
-            b.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-          });
-          setTimeout(() => {
-            bubbles.forEach(b => {
-              b.style.transform = "translate(0,0)";
-            });
-          }, 800);
-        }
+        const x = e.gamma ? e.gamma * 2 : 0;
+        const y = e.beta ? e.beta * 2 : 0;
+        updateBubblesByMotion(x, y);
       });
     }
   </script>
