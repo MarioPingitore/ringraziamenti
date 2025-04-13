@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Guarda il Video</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600&family=Raleway:wght@800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@800&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary: #C4161C;
@@ -19,11 +19,10 @@
 
     html, body {
       height: 100%;
+      font-family: 'Raleway', sans-serif;
       background: var(--primary);
-      color: var(--white);
-      font-family: 'Inter', sans-serif;
       overflow: hidden;
-      position: relative;
+      color: var(--white);
     }
 
     body {
@@ -31,20 +30,20 @@
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
+      text-align: center;
+      position: relative;
       padding: 20px;
     }
 
     header {
       z-index: 2;
-      text-align: center;
       margin-top: 10px;
       animation: fadeIn 1s ease-in-out;
     }
 
     header h1 {
-      font-family: 'Raleway', sans-serif;
       font-size: 2rem;
-      text-shadow: 0 3px 12px rgba(0,0,0,0.3);
+      text-shadow: 0 3px 15px rgba(0,0,0,0.4);
     }
 
     .video-wrapper {
@@ -67,91 +66,102 @@
     footer {
       z-index: 2;
       font-size: 0.8rem;
-      opacity: 0.85;
-      text-align: center;
+      opacity: 0.9;
       animation: fadeIn 1.4s ease-in-out;
     }
 
-    .shapes {
+    /* SFONDO ANIMATO */
+    .bg-shapes {
       position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
-      z-index: 0;
       overflow: hidden;
+      z-index: 0;
+    }
+
+    .circle, .triangle, .square {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 50%;
+      animation: move 12s infinite alternate ease-in-out;
+      mix-blend-mode: overlay;
     }
 
     .circle {
-      position: absolute;
-      background: var(--white);
-      border-radius: 50%;
-      opacity: 0.1;
-      filter: blur(1px);
+      width: 150px;
+      height: 150px;
+      top: 10%;
+      left: -60px;
+      animation-duration: 8s;
     }
 
-    .circle.one {
-      width: 120px; height: 120px;
-      top: 10%; left: -40px;
-      animation: float 6s ease-in-out infinite alternate;
+    .square {
+      width: 120px;
+      height: 120px;
+      border-radius: 0;
+      bottom: -60px;
+      right: -40px;
+      animation-duration: 10s;
     }
 
-    .circle.two {
-      width: 180px; height: 180px;
-      bottom: -60px; right: -60px;
-      opacity: 0.12;
-      animation: drift 10s ease-in-out infinite;
-    }
-
-    .circle.three {
-      width: 100px; height: 100px;
-      top: 30%; right: 20%;
-      opacity: 0.08;
-      animation: pulse 5s ease-in-out infinite;
+    .triangle {
+      width: 0;
+      height: 0;
+      border-left: 70px solid transparent;
+      border-right: 70px solid transparent;
+      border-bottom: 120px solid rgba(255,255,255,0.05);
+      top: 30%;
+      left: 60%;
+      animation: float 6s infinite ease-in-out;
     }
 
     .wave {
       position: absolute;
-      bottom: 0;
-      left: -30%;
-      width: 160%;
-      height: 250px;
-      background: var(--white);
-      opacity: 0.03;
+      width: 200%;
+      height: 300px;
+      bottom: -80px;
+      left: -50%;
+      background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent);
       border-radius: 35% 65% 60% 40%;
-      transform: rotate(-6deg);
-      animation: slowMove 20s ease-in-out infinite;
+      animation: waveMove 18s ease-in-out infinite;
     }
 
-    @keyframes float {
-      0% { transform: translateY(0px); }
-      100% { transform: translateY(-20px); }
-    }
-
-    @keyframes drift {
-      0% { transform: translate(0, 0); }
-      100% { transform: translate(-20px, 10px); }
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 0.08; }
-      50% { transform: scale(1.15); opacity: 0.14; }
-    }
-
-    @keyframes slowMove {
-      0% { transform: rotate(-6deg) translateX(0); }
-      100% { transform: rotate(-6deg) translateX(30px); }
-    }
-
+    /* ANIMAZIONI */
     @keyframes fadeIn {
       0% { opacity: 0; transform: translateY(10px); }
       100% { opacity: 1; transform: translateY(0); }
     }
+
+    @keyframes move {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(40px, -40px) scale(1.2); }
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0); }
+    }
+
+    @keyframes waveMove {
+      0% { transform: rotate(-6deg) translateX(0); }
+      100% { transform: rotate(-6deg) translateX(60px); }
+    }
+
+    @media (max-height: 700px) {
+      footer {
+        display: none;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="shapes">
-    <div class="circle one"></div>
-    <div class="circle two"></div>
-    <div class="circle three"></div>
+  <div class="bg-shapes">
+    <div class="circle"></div>
+    <div class="square"></div>
+    <div class="triangle"></div>
     <div class="wave"></div>
   </div>
 
