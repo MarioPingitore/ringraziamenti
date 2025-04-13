@@ -251,13 +251,17 @@
     createBubble();
   }
 
-  // Esplosione automatica a gruppi di 5 ogni 4 secondi
+  // Esplosione automatica a gruppi di 7 ogni 3 secondi, con micro ritardi
   setInterval(() => {
     const explodable = [...bubbles];
-    const toExplode = explodable.sort(() => 0.5 - Math.random()).slice(0, 5);
-    toExplode.forEach(b => explodeBubble(b));
-  }, 4000);
+    const toExplode = explodable.sort(() => 0.5 - Math.random()).slice(0, 7);
+    toExplode.forEach((b, i) => {
+      const delay = Math.random() * 300 + i * 100; // micro ritardo + incremento graduale
+      setTimeout(() => explodeBubble(b), delay);
+    });
+  }, 3000);
 </script>
+
 
 </body>
 </html>
