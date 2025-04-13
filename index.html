@@ -55,6 +55,7 @@
       border-radius: 20px;
       overflow: hidden;
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+      margin-top: 10px; /* Ridotto lo spazio tra il testo e il video */
     }
 
     iframe {
@@ -68,16 +69,16 @@
       font-size: 0.8rem;
     }
 
-        .bg-bubbles {
+    .bg-bubbles {
       position: absolute;
       top: 0; left: 0;
       width: 100%;
       height: 100%;
       overflow: hidden;
-      z-index: 1; /* Impostato ad un livello più basso */
-      pointer-events: none; /* Non interferisce con i clic nel corpo */
+      z-index: 1;
+      pointer-events: none;
     }
-    
+
     .bubble {
       position: absolute;
       border-radius: 50%;
@@ -85,8 +86,9 @@
       animation: float 8s ease-in-out infinite, morph 4s ease-in-out infinite alternate;
       will-change: transform;
       pointer-events: auto; /* Consente ai clic di essere registrati */
-      z-index: 2; /* Più alto per assicurarsi che siano sopra l'iframe */
+      z-index: 2; /* Più alto per essere sopra l'iframe */
     }
+
     @keyframes float {
       0% { transform: translateY(0) scale(1); }
       50% { transform: translateY(-30px) scale(1.05); }
@@ -125,8 +127,7 @@
     <h2>Laurea Magistrale</h2>
     <h2>in</h2>
     <h1>Computer Engineering for the Internet of Things</h1>
-    <br></br>
-    <br></br>
+    <br><br>
     <h2>A tutti voi:</h2>
   </header>
 
@@ -191,8 +192,6 @@
         setTimeout(() => confetti.remove(), 1000);
       }
     }
-
-    
   </script>
 </body>
 </html>
