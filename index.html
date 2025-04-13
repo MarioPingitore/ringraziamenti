@@ -24,20 +24,14 @@
       font-family: 'Raleway', sans-serif;
       background-color: var(--primary);
       color: var(--white);
-    }
-
-    body {
-      position: relative;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      align-items: center;
-      text-align: center;
-      padding: 20px;
     }
 
     header {
-      margin-top: 10px;
+      text-align: center;
+      margin-top: 20px;
       z-index: 2;
     }
 
@@ -45,6 +39,17 @@
       font-size: 2rem;
       color: var(--white);
       text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+    }
+
+    header h2 {
+      font-size: 1.5rem;
+      color: var(--white);
+    }
+
+    .atutti-voi {
+      margin-top: 10px;
+      font-size: 1.5rem;
+      color: var(--white);
     }
 
     .video-wrapper {
@@ -55,7 +60,11 @@
       border-radius: 20px;
       overflow: hidden;
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-      margin-top: 20px;
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;  /* Necessario per la corretta gestione delle bolle */
     }
 
     iframe {
@@ -64,18 +73,13 @@
       border: none;
     }
 
-    .atutti-voi {
-      margin-top: 20px;
-      font-size: 1.5rem;
-      color: var(--white);
-    }
-
     footer {
       z-index: 2;
       font-size: 0.8rem;
-      margin-top: 20px;
       position: absolute;
       bottom: 20px;
+      width: 100%;
+      text-align: center;
     }
 
     .bg-bubbles {
@@ -128,14 +132,6 @@
       0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
       100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)); opacity: 0; }
     }
-
-    /* Per centrare verticalmente il video */
-    .video-wrapper {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 40px; /* Aggiunta distanza tra la scritta e il video */
-    }
   </style>
 </head>
 <body>
@@ -166,13 +162,20 @@
       bubble.classList.add('bubble');
       bubble.style.width = `${size}px`;
       bubble.style.height = `${size}px`;
-      bubble.style.top = `${Math.random() * 60 + 20}%`; // bolle più in alto
       bubble.style.left = `${Math.random() * 100}%`;
+
+      // Le bolle sopra il video esplodono automaticamente
+      if (Math.random() > 0.5) { // Probabilità di apparire sopra il video
+        bubble.style.top = `${Math.random() * 50 + 20}%`; // Bolle sopra il video
+      } else { // Bolle sotto il video
+        bubble.style.top = `${Math.random() * 30 + 60}%`;
+      }
+
       bubble.style.animationDelay = `${Math.random() * 5}s`;
       bubbleContainer.appendChild(bubble);
       bubbles.push(bubble);
 
-      // Se la bolla è sopra il video o sopra le scritte, esplode automaticamente
+      // Esplosione automatica delle bolle sopra il video
       if (!isClickable) {
         setTimeout(() => {
           bubble.style.animation = 'pop 0.3s ease-out forwards';
@@ -181,6 +184,7 @@
             bubble.remove();
             const index = bubbles.indexOf(bubble);
             if (index > -1) bubbles.splice(index, 1);
+            createBubble(false);  // Creazione di una nuova bolla sopra il video
           }, 300);
         }, 3000);
       }
@@ -194,7 +198,7 @@
             bubble.remove();
             const index = bubbles.indexOf(bubble);
             if (index > -1) bubbles.splice(index, 1);
-            createBubble(true); // Nuova bolla cliccabile sotto il video
+            createBubble(true);  // Nuova bolla cliccabile sotto il video
           }, 300);
         });
       }
@@ -222,11 +226,20 @@
         confetti.style.setProperty('--tx', tx);
         confetti.style.setProperty('--ty', ty);
         confetti.style.setProperty('--rot', rot);
-        confetti.style.animation = 'confettiFall 0.9s ease-out forwards';
-        document.body.appendChild(confetti);
-        setTimeout(() => confetti.remove(), 1000);
+        confetti.style.animation = 'confettiFall 3s forwards';
+        bubbleContainer.appendChild(confetti);
+        setTimeout(() => {
+          confetti.remove();
+        }, 3000);
       }
     }
+
+    // Le bolle sono ripristinate periodicamente per non scomparire mai
+    setInterval(() => {
+      if (bubbles.length < NUM_BUBBLES) {
+        createBubble(false);  // Riapparizione delle bolle sopra il video
+      }
+    }, 5000);
   </script>
 </body>
 </html>
