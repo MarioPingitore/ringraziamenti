@@ -38,7 +38,9 @@
     header {
       z-index: 2;
       margin-top: 10px;
-      animation: fadeIn 1s ease-in-out;
+      opacity: 0;
+      transform: translateY(-20px);
+      animation: fadeInUp 1s ease-out forwards 0.3s;
     }
 
     header h1 {
@@ -54,7 +56,9 @@
       border-radius: 18px;
       overflow: hidden;
       box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
-      animation: fadeIn 1.2s ease-out;
+      opacity: 0;
+      transform: scale(0.95);
+      animation: zoomIn 1s ease-out forwards 0.8s;
     }
 
     iframe {
@@ -66,11 +70,10 @@
     footer {
       z-index: 2;
       font-size: 0.8rem;
-      opacity: 0.9;
-      animation: fadeIn 1.4s ease-in-out;
+      opacity: 0;
+      animation: fadeInUp 1s ease-out forwards 1.4s;
     }
 
-    /* SFONDO ANIMATO */
     .bg-shapes {
       position: absolute;
       top: 0;
@@ -79,31 +82,31 @@
       height: 100%;
       overflow: hidden;
       z-index: 0;
+      pointer-events: none;
     }
 
-    .circle, .triangle, .square {
+    .shape {
       position: absolute;
       background: rgba(255, 255, 255, 0.08);
-      border-radius: 50%;
-      animation: move 12s infinite alternate ease-in-out;
       mix-blend-mode: overlay;
+      will-change: transform;
     }
 
     .circle {
       width: 150px;
       height: 150px;
+      border-radius: 50%;
       top: 10%;
       left: -60px;
-      animation-duration: 8s;
+      animation: float 6s ease-in-out infinite;
     }
 
     .square {
       width: 120px;
       height: 120px;
-      border-radius: 0;
       bottom: -60px;
       right: -40px;
-      animation-duration: 10s;
+      animation: drift 9s ease-in-out infinite;
     }
 
     .triangle {
@@ -114,7 +117,7 @@
       border-bottom: 120px solid rgba(255,255,255,0.05);
       top: 30%;
       left: 60%;
-      animation: float 6s infinite ease-in-out;
+      animation: pulse 8s ease-in-out infinite;
     }
 
     .wave {
@@ -129,25 +132,39 @@
     }
 
     /* ANIMAZIONI */
-    @keyframes fadeIn {
-      0% { opacity: 0; transform: translateY(10px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes move {
-      0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(40px, -40px) scale(1.2); }
-    }
-
     @keyframes float {
       0% { transform: translateY(0); }
       50% { transform: translateY(-15px); }
       100% { transform: translateY(0); }
     }
 
+    @keyframes drift {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-20px, 10px); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+
     @keyframes waveMove {
       0% { transform: rotate(-6deg) translateX(0); }
       100% { transform: rotate(-6deg) translateX(60px); }
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes zoomIn {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
     }
 
     @media (max-height: 700px) {
@@ -158,10 +175,10 @@
   </style>
 </head>
 <body>
-  <div class="bg-shapes">
-    <div class="circle"></div>
-    <div class="square"></div>
-    <div class="triangle"></div>
+  <div class="bg-shapes" id="parallax">
+    <div class="shape circle" data-speed="3"></div>
+    <div class="shape square" data-speed="2"></div>
+    <div class="shape triangle" data-speed="4"></div>
     <div class="wave"></div>
   </div>
 
@@ -174,5 +191,27 @@
   </div>
 
   <footer>&copy; 2025 - Il tuo progetto creativo</footer>
+
+  <!-- Script per parallasse -->
+  <script>
+    document.addEventListener('mousemove', (e) => {
+      document.querySelectorAll('.shape').forEach(shape => {
+        const speed = shape.getAttribute('data-speed');
+        const x = (window.innerWidth - e.pageX * speed) / 100;
+        const y = (window.innerHeight - e.pageY * speed) / 100;
+        shape.style.transform = `translate(${x}px, ${y}px)`;
+      });
+    });
+
+    document.addEventListener('touchmove', (e) => {
+      const touch = e.touches[0];
+      document.querySelectorAll('.shape').forEach(shape => {
+        const speed = shape.getAttribute('data-speed');
+        const x = (window.innerWidth - touch.pageX * speed) / 100;
+        const y = (window.innerHeight - touch.pageY * speed) / 100;
+        shape.style.transform = `translate(${x}px, ${y}px)`;
+      });
+    });
+  </script>
 </body>
 </html>
