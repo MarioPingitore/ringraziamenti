@@ -55,7 +55,7 @@
       border-radius: 20px;
       overflow: hidden;
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-      margin-top: 10px;
+      margin-top: 20px;
     }
 
     iframe {
@@ -64,9 +64,18 @@
       border: none;
     }
 
+    .atutti-voi {
+      margin-top: 20px;
+      font-size: 1.5rem;
+      color: var(--white);
+    }
+
     footer {
       z-index: 2;
       font-size: 0.8rem;
+      margin-top: 20px;
+      position: absolute;
+      bottom: 20px;
     }
 
     .bg-bubbles {
@@ -86,7 +95,7 @@
       animation: float 8s ease-in-out infinite, morph 4s ease-in-out infinite alternate;
       will-change: transform;
       pointer-events: auto;
-      user-select: none; /* Rimuove la selezione delle bolle */
+      user-select: none;
       z-index: 2;
     }
 
@@ -119,6 +128,14 @@
       0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
       100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)); opacity: 0; }
     }
+
+    /* Per centrare verticalmente il video */
+    .video-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 40px; /* Aggiunta distanza tra la scritta e il video */
+    }
   </style>
 </head>
 <body>
@@ -128,9 +145,9 @@
     <h2>Laurea Magistrale</h2>
     <h2>in</h2>
     <h1>Computer Engineering for the Internet of Things</h1>
-    <br><br>
-    <h2>A tutti voi:</h2>
   </header>
+
+  <div class="atutti-voi">A tutti voi:</div>
 
   <div class="video-wrapper">
     <iframe src="https://www.youtube.com/embed/K7wmRFfenCM" allowfullscreen></iframe>
@@ -143,32 +160,49 @@
     const NUM_BUBBLES = 15;
     const bubbles = [];
 
-    function createBubble() {
+    function createBubble(isClickable) {
       const bubble = document.createElement('div');
       const size = Math.random() * 60 + 100; // bolle grandi
       bubble.classList.add('bubble');
       bubble.style.width = `${size}px`;
       bubble.style.height = `${size}px`;
-      bubble.style.top = `${Math.random() * 100}%`;
+      bubble.style.top = `${Math.random() * 60 + 20}%`; // bolle più in alto
       bubble.style.left = `${Math.random() * 100}%`;
       bubble.style.animationDelay = `${Math.random() * 5}s`;
       bubbleContainer.appendChild(bubble);
       bubbles.push(bubble);
 
-      bubble.addEventListener('click', () => {
-        bubble.style.animation = 'pop 0.3s ease-out forwards';
-        spawnConfetti(bubble.getBoundingClientRect());
+      // Se la bolla è sopra il video o sopra le scritte, esplode automaticamente
+      if (!isClickable) {
         setTimeout(() => {
-          bubble.remove();
-          const index = bubbles.indexOf(bubble);
-          if (index > -1) bubbles.splice(index, 1);
-          createBubble();
-        }, 300);
-      });
+          bubble.style.animation = 'pop 0.3s ease-out forwards';
+          spawnConfetti(bubble.getBoundingClientRect());
+          setTimeout(() => {
+            bubble.remove();
+            const index = bubbles.indexOf(bubble);
+            if (index > -1) bubbles.splice(index, 1);
+          }, 300);
+        }, 3000);
+      }
+
+      // Se la bolla è sotto il video, è cliccabile
+      if (isClickable) {
+        bubble.addEventListener('click', () => {
+          bubble.style.animation = 'pop 0.3s ease-out forwards';
+          spawnConfetti(bubble.getBoundingClientRect());
+          setTimeout(() => {
+            bubble.remove();
+            const index = bubbles.indexOf(bubble);
+            if (index > -1) bubbles.splice(index, 1);
+            createBubble(true); // Nuova bolla cliccabile sotto il video
+          }, 300);
+        });
+      }
     }
 
     for (let i = 0; i < NUM_BUBBLES; i++) {
-      createBubble();
+      // Le bolle sopra il video non sono cliccabili
+      createBubble(i < 5);  // La prima parte delle bolle è sopra il video (non cliccabili)
     }
 
     function spawnConfetti(rect) {
@@ -180,7 +214,7 @@
         const y = rect.top + rect.height / 2;
         confetti.style.left = `${x}px`;
         confetti.style.top = `${y}px`;
-        const colors = ['#fff', '#f7f7f7', '#eeeeee'];
+        const colors = ['#ff0000', '#ff7f00', '#ffff00', '#00ff00', '#0000ff', '#8a2be2'];  // Colori vivaci per i confetti
         confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
         const tx = (Math.random() * 300 - 150) + 'px';
         const ty = (Math.random() * 300 - 150) + 'px';
