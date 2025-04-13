@@ -68,25 +68,25 @@
       font-size: 0.8rem;
     }
 
-    .bg-bubbles {
+        .bg-bubbles {
       position: absolute;
       top: 0; left: 0;
       width: 100%;
       height: 100%;
       overflow: hidden;
-      z-index: 0;
-      pointer-events: none;
+      z-index: 1; /* Impostato ad un livello più basso */
+      pointer-events: none; /* Non interferisce con i clic nel corpo */
     }
-
+    
     .bubble {
       position: absolute;
       border-radius: 50%;
       background-color: var(--bubble);
       animation: float 8s ease-in-out infinite, morph 4s ease-in-out infinite alternate;
       will-change: transform;
-      pointer-events: auto;
+      pointer-events: auto; /* Consente ai clic di essere registrati */
+      z-index: 2; /* Più alto per assicurarsi che siano sopra l'iframe */
     }
-
     @keyframes float {
       0% { transform: translateY(0) scale(1); }
       50% { transform: translateY(-30px) scale(1.05); }
