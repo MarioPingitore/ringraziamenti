@@ -23,20 +23,21 @@
       font-family: 'Raleway', sans-serif;
       background-color: var(--primary);
       color: var(--white);
+      overflow: hidden; /* Disabilita lo scrolling */
     }
 
     body {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center; /* Centra il contenuto verticalmente */
       align-items: center;
       text-align: center;
       padding: 20px;
-      flex-grow: 1; /* Aggiunto per far espandere il body */
+      flex-grow: 1;
     }
 
     header {
-      margin-top: 10px;
+      margin-bottom: 20px; /* Aggiungi margine tra il titolo e il video */
       z-index: 2;
     }
 
@@ -59,6 +60,7 @@
       border-radius: 20px;
       overflow: hidden;
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+      margin-bottom: 40px; /* Distanza tra il video e il footer */
     }
 
     iframe {
@@ -70,7 +72,11 @@
     footer {
       z-index: 2;
       font-size: 0.8rem;
-      margin-top: 20px;
+      margin-top: 0;
+      position: absolute;
+      bottom: 20px; /* Posiziona il footer in basso */
+      width: 100%; /* Assicura che il footer occupi tutta la larghezza */
+      text-align: center;
     }
 
     .bg-bubbles {
@@ -91,7 +97,7 @@
       will-change: transform;
       cursor: pointer;
       pointer-events: auto;
-      user-select: none; /* Impedisce la selezione del testo */
+      user-select: none;
     }
 
     @keyframes float {
@@ -138,11 +144,13 @@
       .video-wrapper {
         width: 100%; /* Video prende tutta la larghezza */
         max-width: none;
-        margin-top: 20px; /* Spazio tra il testo e il video */
+        margin-bottom: 40px; /* Spazio tra il video e il footer */
       }
 
       footer {
-        margin-top: 20px; /* Aggiungere spazio sopra il footer */
+        position: absolute;
+        bottom: 10px; /* Footer più vicino al fondo su mobile */
+        font-size: 0.8rem;
       }
     }
   </style>
