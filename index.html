@@ -68,6 +68,7 @@
       font-size: 0.8rem;
     }
 
+    /* Stili per le bolle */
     .bubble {
       position: absolute;
       border-radius: 50%;
@@ -76,6 +77,7 @@
       transition: transform 0.3s ease, opacity 0.3s ease;
     }
 
+    /* Contenitore per le bolle */
     .bg-bubbles {
       position: absolute;
       top: 0; left: 0;
@@ -85,15 +87,24 @@
       z-index: 0;
     }
 
+    /* Stili per le particelle di coriandoli */
+    .confetti {
+      position: absolute;
+      width: 6px;
+      height: 10px;
+      opacity: 0.9;
+      transform: rotate(0deg);
+      pointer-events: none;
+    }
+
     @keyframes pop {
-      0% {
-        transform: scale(1);
-        opacity: 1;
-      }
-      100% {
-        transform: scale(1.8);
-        opacity: 0;
-      }
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1.8); opacity: 0; }
+    }
+
+    @keyframes confettiFall {
+      0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+      100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)); opacity: 0; }
     }
   </style>
 </head>
@@ -101,7 +112,7 @@
   <div class="bg-bubbles" id="bubbles-container"></div>
 
   <header>
-    <h1>Guarda il nostro video</h1>
+    <h1>Guarda il bubbolo video</h1>
   </header>
 
   <div class="video-wrapper">
@@ -115,22 +126,22 @@
     const NUM_BUBBLES = 20;
     const bubbles = [];
 
+    // Funzione per creare una bolla
     function createBubble() {
       const bubble = document.createElement('div');
-      const size = Math.random() * 40 + 80; // 80-120 px
+      const size = Math.random() * 40 + 80; // dimensioni: 80-120px
       bubble.classList.add('bubble');
       bubble.style.width = `${size}px`;
       bubble.style.height = `${size}px`;
       bubble.style.top = `${Math.random() * 100}%`;
       bubble.style.left = `${Math.random() * 100}%`;
       bubbleContainer.appendChild(bubble);
-
-      // Aggiungi all’array
       bubbles.push(bubble);
 
-      // Scoppio individuale
+      // Azione: al click della bolla, esegue animazione pop e confetti
       bubble.addEventListener('click', () => {
         bubble.style.animation = 'pop 0.3s ease-out forwards';
+        spawnConfetti(bubble.getBoundingClientRect());
         setTimeout(() => {
           bubble.remove();
           const index = bubbles.indexOf(bubble);
@@ -140,32 +151,77 @@
       });
     }
 
+    // Crea le bolle iniziali
     for (let i = 0; i < NUM_BUBBLES; i++) {
       createBubble();
     }
 
-    // Movimento con giroscopio
-    if (window.DeviceOrientationEvent) {
-      window.addEventListener("deviceorientation", (e) => {
-        const x = e.gamma / 8;
-        const y = e.beta / 8;
-        bubbles.forEach(b => {
-          b.style.transform = `translate(${x}px, ${y}px)`;
-        });
+    // Funzione per generare particelle di coriandoli
+    function spawnConfetti(rect) {
+      const numPieces = 15;
+      for (let i = 0; i < numPieces; i++) {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        // Posizionamento: centro della bolla
+        const x = rect.left + rect.width / 2;
+        const y = rect.top + rect.height / 2;
+        confetti.style.left = `${x}px`;
+        confetti.style.top = `${y}px`;
+        // Colori casuali
+        const colors = ['#FFFFFF', '#FFFAF0', '#F0F8FF'];
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        // Imposta variabili CSS per movimento casuale
+        const tx = (Math.random() * 200 - 100) + 'px';
+        const ty = (Math.random() * 200 - 100) + 'px';
+        const rot = (Math.random() * 360) + 'deg';
+        confetti.style.setProperty('--tx', tx);
+        confetti.style.setProperty('--ty', ty);
+        confetti.style.setProperty('--rot', rot);
+        confetti.style.animation = 'confettiFall 0.8s ease-out forwards';
+        document.body.appendChild(confetti);
+        // Rimuove il confetti dopo l'animazione
+        setTimeout(() => {
+          confetti.remove();
+        }, 800);
+      }
+    }
+
+    // Movimento in base al device orientation o mouse (per dispositivi non mobili)
+    function updateBubblesMovement(xOffset, yOffset) {
+      bubbles.forEach(b => {
+        b.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
       });
     }
 
-    // Scuotimento con accelerometro
+    // Usa l'evento deviceorientation (giroscopio)
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener("deviceorientation", (e) => {
+        // Modifica il divisore per controllare la sensibilità
+        const x = e.gamma ? e.gamma / 6 : 0;
+        const y = e.beta ? e.beta / 6 : 0;
+        updateBubblesMovement(x, y);
+      });
+    }
+
+    // Fallback con il mouse
+    document.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 20;
+      const y = (e.clientY / window.innerHeight - 0.5) * 20;
+      updateBubblesMovement(x, y);
+    });
+
+    // Rilevamento dello shake con devicemotion
     if (window.DeviceMotionEvent) {
       let lastShake = 0;
       window.addEventListener("devicemotion", (e) => {
         const acc = e.accelerationIncludingGravity;
+        // Calcola la magnitudine dell'accelerazione
         const magnitude = Math.sqrt(acc.x**2 + acc.y**2 + acc.z**2);
-
         const now = Date.now();
-        if (magnitude > 18 && now - lastShake > 1000) {
+        // Soglia di shake (può variare a seconda del dispositivo)
+        if (magnitude > 15 && now - lastShake > 1000) {
           lastShake = now;
-          // effetto "esplosione"
+          // Genera un effetto di movimento "esplosivo" per tutte le bolle
           bubbles.forEach(b => {
             const offsetX = (Math.random() - 0.5) * 200;
             const offsetY = (Math.random() - 0.5) * 200;
@@ -174,7 +230,7 @@
           });
           setTimeout(() => {
             bubbles.forEach(b => {
-              b.style.transform = `translate(0,0)`;
+              b.style.transform = "translate(0,0)";
             });
           }, 800);
         }
