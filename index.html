@@ -35,6 +35,7 @@
       text-align: center;
       padding: 20px;
       height: 100vh; /* Usa l'altezza completa della viewport */
+      overflow: hidden;
     }
 
     header {
@@ -61,7 +62,7 @@
       border-radius: 20px;
       overflow: hidden;
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-      margin-top: 0; /* Eliminato completamente lo spazio tra "A tutti voi" e il video */
+      margin-top: 20px; /* Spazio tra il testo e il video */
     }
 
     iframe {
@@ -74,7 +75,8 @@
       z-index: 2;
       font-size: 0.8rem;
       margin-top: auto;
-      padding-top: 40px;
+      padding-top: 20px;
+      padding-bottom: 20px;
     }
 
     .bg-bubbles {
@@ -126,6 +128,24 @@
       0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
       100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)); opacity: 0; }
     }
+
+    /* Ottimizzazione per dispositivi mobili */
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 1.5rem;
+      }
+
+      .video-wrapper {
+        width: 100%;
+        margin-top: 20px;
+        max-width: none;
+        aspect-ratio: 16/9;
+      }
+
+      footer {
+        font-size: 0.7rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -142,7 +162,8 @@
   <div style="display: flex; flex-direction: column; align-items: center; width: 100%; margin-bottom: 0;">
     <p style="font-size: 1.5rem; font-weight: bold; margin-bottom: 3px;">A tutti voi:</p>
     <div class="video-wrapper" style="margin-top: 0;">
-    <iframe src="https://www.youtube.com/embed/K7wmRFfenCM" allowfullscreen></iframe>
+      <iframe src="https://www.youtube.com/embed/K7wmRFfenCM" allowfullscreen></iframe>
+    </div>
   </div>
 
   <footer>&copy; Mario Pingitore - 30 Aprile 2025</footer>
@@ -191,14 +212,8 @@
       const numPieces = 20;
       // Colori vivaci per i confetti
       const colors = [
-        '#FF5252', // rosso
-        '#FFEB3B', // giallo
-        '#2196F3', // blu
-        '#4CAF50', // verde
-        '#9C27B0', // viola
-        '#FF9800', // arancione
-        '#00BCD4', // azzurro
-        '#E91E63'  // rosa
+        '#FF5252', '#FFEB3B', '#2196F3', '#4CAF50', '#9C27B0',
+        '#FF9800', '#00BCD4', '#E91E63'
       ];
       
       for (let i = 0; i < numPieces; i++) {
