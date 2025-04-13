@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>bubbolo il Video</title>
+  <title>Guarda il Video</title>
   <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@800&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -73,7 +73,7 @@
       border-radius: 50%;
       background-color: var(--bubble);
       pointer-events: auto;
-      transition: transform 0.2s ease;
+      transition: transform 0.3s ease, opacity 0.3s ease;
     }
 
     .bg-bubbles {
@@ -85,15 +85,14 @@
       z-index: 0;
     }
 
-    @keyframes float {
+    @keyframes pop {
       0% {
-        transform: translateY(0) translateX(0);
-      }
-      50% {
-        transform: translateY(-15px) translateX(10px);
+        transform: scale(1);
+        opacity: 1;
       }
       100% {
-        transform: translateY(0) translateX(0);
+        transform: scale(1.8);
+        opacity: 0;
       }
     }
   </style>
@@ -113,24 +112,29 @@
 
   <script>
     const bubbleContainer = document.getElementById('bubbles-container');
-    const NUM_BUBBLES = 30;
+    const NUM_BUBBLES = 20;
+    const bubbles = [];
 
     function createBubble() {
       const bubble = document.createElement('div');
-      const size = Math.random() * 40 + 20; // 20-60 px
+      const size = Math.random() * 40 + 80; // 80-120 px
       bubble.classList.add('bubble');
       bubble.style.width = `${size}px`;
       bubble.style.height = `${size}px`;
       bubble.style.top = `${Math.random() * 100}%`;
       bubble.style.left = `${Math.random() * 100}%`;
-      bubble.style.animation = `float ${Math.random() * 5 + 5}s ease-in-out infinite`;
       bubbleContainer.appendChild(bubble);
 
-      // interazione touch per "scoppiare" la bolla
+      // Aggiungi all’array
+      bubbles.push(bubble);
+
+      // Scoppio individuale
       bubble.addEventListener('click', () => {
-        bubble.style.transform = 'scale(0)';
+        bubble.style.animation = 'pop 0.3s ease-out forwards';
         setTimeout(() => {
           bubble.remove();
+          const index = bubbles.indexOf(bubble);
+          if (index > -1) bubbles.splice(index, 1);
           createBubble();
         }, 300);
       });
@@ -140,25 +144,42 @@
       createBubble();
     }
 
-    // Movimento giroscopico se disponibile
+    // Movimento con giroscopio
     if (window.DeviceOrientationEvent) {
       window.addEventListener("deviceorientation", (e) => {
-        const x = e.gamma / 10;
-        const y = e.beta / 10;
-        document.querySelectorAll('.bubble').forEach(bubble => {
-          bubble.style.transform = `translate(${x}px, ${y}px)`;
+        const x = e.gamma / 8;
+        const y = e.beta / 8;
+        bubbles.forEach(b => {
+          b.style.transform = `translate(${x}px, ${y}px)`;
         });
       });
     }
 
-    // fallback per mouse
-    document.addEventListener('mousemove', (e) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 20;
-      const y = (e.clientY / window.innerHeight - 0.5) * 20;
-      document.querySelectorAll('.bubble').forEach(bubble => {
-        bubble.style.transform = `translate(${x}px, ${y}px)`;
+    // Scuotimento con accelerometro
+    if (window.DeviceMotionEvent) {
+      let lastShake = 0;
+      window.addEventListener("devicemotion", (e) => {
+        const acc = e.accelerationIncludingGravity;
+        const magnitude = Math.sqrt(acc.x**2 + acc.y**2 + acc.z**2);
+
+        const now = Date.now();
+        if (magnitude > 18 && now - lastShake > 1000) {
+          lastShake = now;
+          // effetto "esplosione"
+          bubbles.forEach(b => {
+            const offsetX = (Math.random() - 0.5) * 200;
+            const offsetY = (Math.random() - 0.5) * 200;
+            b.style.transition = "transform 0.5s ease";
+            b.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+          });
+          setTimeout(() => {
+            bubbles.forEach(b => {
+              b.style.transform = `translate(0,0)`;
+            });
+          }, 800);
+        }
       });
-    });
+    }
   </script>
 </body>
 </html>
