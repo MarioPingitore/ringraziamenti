@@ -187,97 +187,77 @@
 
   <footer>&copy; Mario Pingitore - 30 Aprile 2025</footer>
 
-  <script>
-    const bubbleContainer = document.getElementById('bubbles-container');
-    const NUM_BUBBLES = 15;
-    const bubbles = [];
+<script>
+  const bubbleContainer = document.getElementById('bubbles-container');
+  const NUM_BUBBLES = 15;
+  const bubbles = [];
 
-    function createBubble(isClickable) {
-      const bubble = document.createElement('div');
-      const size = Math.random() * 60 + 100; // bolle grandi
-      bubble.classList.add('bubble');
-      bubble.style.width = `${size}px`;
-      bubble.style.height = `${size}px`;
-      bubble.style.left = `${Math.random() * 100}%`;
+  function createBubble() {
+    const bubble = document.createElement('div');
+    const size = Math.random() * 60 + 100;
+    bubble.classList.add('bubble');
+    bubble.style.width = `${size}px`;
+    bubble.style.height = `${size}px`;
+    bubble.style.left = `${Math.random() * 100}%`;
+    bubble.style.top = `${Math.random() * 80 + 10}%`;
+    bubble.style.animationDelay = `${Math.random() * 5}s`;
 
-      // Le bolle sopra il video esplodono automaticamente
-      if (Math.random() > 0.5) { // Probabilità di apparire sopra il video
-        bubble.style.top = `${Math.random() * 50 + 20}%`; // Bolle sopra il video
-      } else { // Bolle sotto il video
-        bubble.style.top = `${Math.random() * 30 + 60}%`;
-      }
+    // Cliccabile
+    bubble.addEventListener('click', () => explodeBubble(bubble));
 
-      bubble.style.animationDelay = `${Math.random() * 5}s`;
-      bubbleContainer.appendChild(bubble);
-      bubbles.push(bubble);
+    bubbleContainer.appendChild(bubble);
+    bubbles.push(bubble);
+  }
 
-      // Esplosione automatica delle bolle sopra il video
-      if (!isClickable) {
-        setTimeout(() => {
-          bubble.style.animation = 'pop 0.3s ease-out forwards';
-          spawnConfetti(bubble.getBoundingClientRect());
-          setTimeout(() => {
-            bubble.remove();
-            const index = bubbles.indexOf(bubble);
-            if (index > -1) bubbles.splice(index, 1);
-            createBubble(false);  // Creazione di una nuova bolla sopra il video
-          }, 300);
-        }, 3000);
-      }
+  function explodeBubble(bubble) {
+    if (!bubble || !bubble.parentElement) return;
 
-      // Se la bolla è sotto il video, è cliccabile
-      if (isClickable) {
-        bubble.addEventListener('click', () => {
-          bubble.style.animation = 'pop 0.3s ease-out forwards';
-          spawnConfetti(bubble.getBoundingClientRect());
-          setTimeout(() => {
-            bubble.remove();
-            const index = bubbles.indexOf(bubble);
-            if (index > -1) bubbles.splice(index, 1);
-            createBubble(true);  // Nuova bolla cliccabile sotto il video
-          }, 300);
-        });
-      }
+    bubble.style.animation = 'pop 0.3s ease-out forwards';
+    spawnConfetti(bubble.getBoundingClientRect());
+
+    setTimeout(() => {
+      const index = bubbles.indexOf(bubble);
+      if (index > -1) bubbles.splice(index, 1);
+      bubble.remove();
+      createBubble(); // Rimpiazzo
+    }, 300);
+  }
+
+  function spawnConfetti(rect) {
+    const numPieces = 20;
+    for (let i = 0; i < numPieces; i++) {
+      const confetti = document.createElement('div');
+      confetti.classList.add('confetti');
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+      confetti.style.left = `${x}px`;
+      confetti.style.top = `${y}px`;
+      const colors = ['#ff0000', '#ff7f00', '#ffff00', '#00ff00', '#0000ff', '#8a2be2'];
+      confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      const tx = (Math.random() * 300 - 150) + 'px';
+      const ty = (Math.random() * 300 - 150) + 'px';
+      const rot = (Math.random() * 360) + 'deg';
+      confetti.style.setProperty('--tx', tx);
+      confetti.style.setProperty('--ty', ty);
+      confetti.style.setProperty('--rot', rot);
+      confetti.style.animation = 'confettiFall 3s forwards';
+      bubbleContainer.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 3000);
     }
+  }
 
-    for (let i = 0; i < NUM_BUBBLES; i++) {
-      // Le bolle sopra il video non sono cliccabili
-      createBubble(i < 5);  // La prima parte delle bolle è sopra il video (non cliccabili)
-    }
+  // Crea tutte le bolle iniziali
+  for (let i = 0; i < NUM_BUBBLES; i++) {
+    createBubble();
+  }
 
-    function spawnConfetti(rect) {
-      const numPieces = 20;
-      for (let i = 0; i < numPieces; i++) {
-        const confetti = document.createElement('div');
-        confetti.classList.add('confetti');
-        const x = rect.left + rect.width / 2;
-        const y = rect.top + rect.height / 2;
-        confetti.style.left = `${x}px`;
-        confetti.style.top = `${y}px`;
-        const colors = ['#ff0000', '#ff7f00', '#ffff00', '#00ff00', '#0000ff', '#8a2be2'];  // Colori vivaci per i confetti
-        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        const tx = (Math.random() * 300 - 150) + 'px';
-        const ty = (Math.random() * 300 - 150) + 'px';
-        const rot = (Math.random() * 360) + 'deg';
-        confetti.style.setProperty('--tx', tx);
-        confetti.style.setProperty('--ty', ty);
-        confetti.style.setProperty('--rot', rot);
-        confetti.style.animation = 'confettiFall 3s forwards';
-        bubbleContainer.appendChild(confetti);
-        setTimeout(() => {
-          confetti.remove();
-        }, 3000);
-      }
-    }
+  // Esplosione automatica a gruppi di 5 ogni 4 secondi
+  setInterval(() => {
+    const explodable = [...bubbles];
+    const toExplode = explodable.sort(() => 0.5 - Math.random()).slice(0, 5);
+    toExplode.forEach(b => explodeBubble(b));
+  }, 4000);
+</script>
 
-    // Le bolle sono ripristinate periodicamente per non scomparire mai
-    setInterval(() => {
-      if (bubbles.length < NUM_BUBBLES) {
-        const isClickable = Math.random() < 0.4; // ~40% cliccabili
-        createBubble(isClickable);
-      }
-    }, 3000);
-
-  </script>
 </body>
 </html>
