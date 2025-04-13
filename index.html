@@ -122,12 +122,12 @@
   <div class="bg-bubbles" id="bubbles-container"></div>
 
   <header>
-    <h2>Laurea Magistrale in</h2>
+    <h2>Laurea Magistrale</h2>
+    <h2>in</h2>
     <h1>Computer Engineering for the Internet of Things</h1>
     <br></br>
     <br></br>
     <h2>A tutti voi:</h2>
-    <br></br>
    
   </header>
 
@@ -139,7 +139,7 @@
 
   <script>
     const bubbleContainer = document.getElementById('bubbles-container');
-    const NUM_BUBBLES = 10;
+    const NUM_BUBBLES = 15;
     const bubbles = [];
 
     function createBubble() {
@@ -193,19 +193,7 @@
       }
     }
 
-    function updateBubblesByMotion(xOffset, yOffset) {
-      bubbles.forEach(b => {
-        b.style.transform = `translate(${xOffset}px, ${yOffset}px) scale(1)`;
-      });
-    }
-
-    if (window.DeviceOrientationEvent) {
-      window.addEventListener("deviceorientation", (e) => {
-        const x = e.gamma ? e.gamma * 2 : 0;
-        const y = e.beta ? e.beta * 2 : 0;
-        updateBubblesByMotion(x, y);
-      });
-    }
+    
   </script>
 </body>
 </html>
