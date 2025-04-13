@@ -71,7 +71,7 @@
 
     .video-wrapper {
       z-index: 2;
-      width: 100%; /* occuperà l'intera larghezza della viewport */
+      width: 80vw; /* occuperà l'intera larghezza della viewport */
       max-width: 1200px;
       aspect-ratio: 16 / 9;
       border-radius: 20px;
@@ -274,9 +274,11 @@
     // Le bolle sono ripristinate periodicamente per non scomparire mai
     setInterval(() => {
       if (bubbles.length < NUM_BUBBLES) {
-        createBubble(false);  // Riapparizione delle bolle sopra il video
+        const isClickable = Math.random() < 0.4; // ~40% cliccabili
+        createBubble(isClickable);
       }
-    }, 5000);
+    }, 3000);
+
   </script>
 </body>
 </html>
