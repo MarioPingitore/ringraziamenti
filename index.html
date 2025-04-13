@@ -20,24 +20,24 @@
 
     html, body {
       height: 100%;
+      overflow: hidden;
       font-family: 'Raleway', sans-serif;
       background-color: var(--primary);
       color: var(--white);
-      overflow: hidden; /* Disabilita lo scrolling */
     }
 
     body {
+      position: relative;
       display: flex;
       flex-direction: column;
-      justify-content: center; /* Centra il contenuto verticalmente */
+      justify-content: space-between;
       align-items: center;
       text-align: center;
       padding: 20px;
-      flex-grow: 1;
     }
 
     header {
-      margin-bottom: 20px; /* Aggiungi margine tra il titolo e il video */
+      margin-top: 10px;
       z-index: 2;
     }
 
@@ -45,11 +45,6 @@
       font-size: 2rem;
       color: var(--white);
       text-shadow: 0 2px 10px rgba(0,0,0,0.4);
-    }
-
-    .subtitle {
-      margin-top: 20px;
-      margin-bottom: 0;
     }
 
     .video-wrapper {
@@ -60,7 +55,7 @@
       border-radius: 20px;
       overflow: hidden;
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-      margin-bottom: 40px; /* Distanza tra il video e il footer */
+      margin-top: 10px;
     }
 
     iframe {
@@ -72,15 +67,10 @@
     footer {
       z-index: 2;
       font-size: 0.8rem;
-      margin-top: 0;
-      position: absolute;
-      bottom: 20px; /* Posiziona il footer in basso */
-      width: 100%; /* Assicura che il footer occupi tutta la larghezza */
-      text-align: center;
     }
 
     .bg-bubbles {
-      position: fixed;
+      position: absolute;
       top: 0; left: 0;
       width: 100%;
       height: 100%;
@@ -95,9 +85,9 @@
       background-color: var(--bubble);
       animation: float 8s ease-in-out infinite, morph 4s ease-in-out infinite alternate;
       will-change: transform;
-      cursor: pointer;
       pointer-events: auto;
-      user-select: none; /* Impedisce la selezione delle bolle */
+      user-select: none; /* Rimuove la selezione delle bolle */
+      z-index: 2;
     }
 
     @keyframes float {
@@ -129,30 +119,6 @@
       0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
       100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)); opacity: 0; }
     }
-
-    /* Media Queries per migliorare la visualizzazione su dispositivi mobili */
-    @media (max-width: 600px) {
-      body {
-        padding: 10px;
-        justify-content: flex-start; /* La parte superiore prende più spazio */
-      }
-
-      header h1 {
-        font-size: 1.5rem; /* Ridurre la dimensione del titolo su schermi piccoli */
-      }
-
-      .video-wrapper {
-        width: 100%; /* Video prende tutta la larghezza */
-        max-width: none;
-        margin-bottom: 40px; /* Spazio tra il video e il footer */
-      }
-
-      footer {
-        position: absolute;
-        bottom: 10px; /* Footer più vicino al fondo su mobile */
-        font-size: 0.8rem;
-      }
-    }
   </style>
 </head>
 <body>
@@ -162,17 +128,15 @@
     <h2>Laurea Magistrale</h2>
     <h2>in</h2>
     <h1>Computer Engineering for the Internet of Things</h1>
+    <br><br>
+    <h2>A tutti voi:</h2>
   </header>
-    
-  <div style="flex-grow: 0.4;"></div>
-  
-  <div style="display: flex; flex-direction: column; align-items: center; width: 100%; margin-bottom: 0;">
-    <p style="font-size: 1.5rem; font-weight: bold; margin-bottom: 3px;">A tutti voi:</p>
-    <div class="video-wrapper" style="margin-top: 0;">
-      <iframe src="https://www.youtube.com/embed/K7wmRFfenCM" allowfullscreen></iframe>
-    </div>
 
-    <footer>&copy; Mario Pingitore - 30 Aprile 2025</footer>
+  <div class="video-wrapper">
+    <iframe src="https://www.youtube.com/embed/K7wmRFfenCM" allowfullscreen></iframe>
+  </div>
+
+  <footer>&copy; Mario Pingitore - 30 Aprile 2025</footer>
 
   <script>
     const bubbleContainer = document.getElementById('bubbles-container');
@@ -185,18 +149,9 @@
       bubble.classList.add('bubble');
       bubble.style.width = `${size}px`;
       bubble.style.height = `${size}px`;
-      
-      // Limitare la generazione delle bolle tra il video e il footer
-      const videoWrapper = document.querySelector('.video-wrapper');
-      const footer = document.querySelector('footer');
-      const videoHeight = videoWrapper.getBoundingClientRect().bottom;
-      const footerHeight = footer.getBoundingClientRect().top;
-      
-      const randomTop = Math.random() * (footerHeight - videoHeight) + videoHeight; // Genera tra video e footer
-      bubble.style.top = `${randomTop}px`;
+      bubble.style.top = `${Math.random() * 100}%`;
       bubble.style.left = `${Math.random() * 100}%`;
       bubble.style.animationDelay = `${Math.random() * 5}s`;
-      
       bubbleContainer.appendChild(bubble);
       bubbles.push(bubble);
 
@@ -218,8 +173,6 @@
 
     function spawnConfetti(rect) {
       const numPieces = 20;
-      const colors = ['#FF5252', '#FFEB3B', '#2196F3', '#4CAF50', '#9C27B0', '#FF9800', '#00BCD4', '#E91E63'];
-      
       for (let i = 0; i < numPieces; i++) {
         const confetti = document.createElement('div');
         confetti.classList.add('confetti');
@@ -227,6 +180,7 @@
         const y = rect.top + rect.height / 2;
         confetti.style.left = `${x}px`;
         confetti.style.top = `${y}px`;
+        const colors = ['#fff', '#f7f7f7', '#eeeeee'];
         confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
         const tx = (Math.random() * 300 - 150) + 'px';
         const ty = (Math.random() * 300 - 150) + 'px';
